@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: onelink-bio
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
+    envVars:
+      - key: SECRET_KEY
+        fromEnvVar: SECRET_KEY
+      - key: OPENAI_API_KEY
+        fromEnvVar: OPENAI_API_KEY
