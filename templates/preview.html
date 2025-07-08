@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ username }}'s Bio Page</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f9f9f9, #e0ecff);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .profile-pic {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #0077cc;
+    }
+
+    .bio {
+      font-style: italic;
+      color: #444;
+      margin: 15px 0 30px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    a.link {
+      color: #0077cc;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    a.link:hover {
+      text-decoration: underline;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #0077cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #005fa3;
+    }
+
+    #publicLink {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    #copyToast {
+      display: none;
+      color: green;
+      margin-top: 8px;
+    }
+
+    #qrcode {
+      margin-top: 20px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    {% if profile_pic %}
+      <img src="/static/uploads/profile_images/{{ profile_pic }}" alt="Profile Pic" class="profile-pic">
+    {% endif %}
+
+    <h2>🌐 {{ username }}'s Bio Page</h2>
+
+    {% if bio %}
+      <p class="bio">"{{ bio }}"</p>
+    {% endif %}
+
+    {% if links %}
+      <ul>
+        {% for title, url in links %}
+          <li><a href="{{ url }}" target="_blank" class="link">🔗 {{ title }}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No links yet!</p>
+    {% endif %}
+
+    <a href="{{ url_for('export_by_username', username=username) }}" class="btn">⬇️ Export Bio as HTML</a>
+
+    <input type="text" id="publicLink" value="{{ request.host_url }}preview/{{ username }}" readonly>
+    <button onclick="copyLink()" class="btn">📋 Copy Public Link</button>
+    <div id="copyToast">✅ Link copied!</div>
+
+    <div id="qrcode"></div>
+
+    <div class="footer">
+      <a href="/">Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    function copyLink() {
+      const copyText = document.getElementById("publicLink");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      document.getElementById("copyToast").style.display = "block";
+      setTimeout(() => {
+        document.getElementById("copyToast").style.display = "none";
+      }, 1500);
+    }
+
+    new QRCode(document.getElementById("qrcode"), {
+      text: document.getElementById("publicLink").value,
+      width: 160,
+      height: 160,
+    });
+  </script>
+</body>
+</html>
